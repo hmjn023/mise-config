@@ -7,7 +7,8 @@ Arch Linux (CachyOS) 用のユーザー環境を mise で bootstrap する設定
 
 ## Initial setup
 
-`mise` と `paru` が使える状態で、リポジトリのルートから実行します。
+package-plugin 対応版の `mise` を用意し、リポジトリのルートから実行します。
+`paru` 本体は `pacman:paru` として先に導入されます。
 
 ```sh
 mise trust
@@ -20,11 +21,13 @@ dry-run の出力を確認し、必要な設定ファイルをバックアップ
 より慎重に進める場合は、パッケージだけを先に適用できます。
 
 ```sh
-mise bootstrap packages apply --yes
+mise bootstrap plugins apply --dry-run
+mise bootstrap plugins apply
+mise bootstrap packages apply --manager pacman --yes
 mise bootstrap repos apply --yes
 mise bootstrap dotfiles apply --force --yes
 mise bootstrap linux systemd-units apply --yes
-mise run aur
+mise bootstrap packages apply --manager paru --yes
 ```
 
 ## Hyprland
@@ -45,9 +48,27 @@ Lua 設定で正常に起動できることを確認してから、残ってい�
 
 ## AUR
 
-`mise bootstrap` の最後に `bootstrap` task が実行され、AUR パッケージを paru で
-インストールします。AUR の構築・署名は pacman の外側にあるため、mise の標準
-package manager ではなく task として扱っています。
+`plugins/paru/` は mise の package plugin です。`mise.toml` の
+`[bootstrap.packages]` に通常の package manager と同じ感覚で
+`"paru:google-chrome" = "latest"` のように宣言できます。
+
+```sh
+mise bootstrap plugins status
+mise bootstrap packages status --manager paru
+mise bootstrap packages apply --manager paru --yes
+mise bootstrap packages upgrade --manager paru --yes
+```
+
+plugin は `paru -Q` で状態を確認し、`paru -S --needed --noconfirm` で
+宣言されたパッケージだけを処理します。mise の package-plugin API v1 では
+uninstall/prune は未対応なので、削除は `paru -Rns` を手動で実行してください。
+
+`[bootstrap.plugins]` は現在このリポジトリの絶対パスを指しています。リポジトリを
+別の場所へ移動した場合は `mise.toml` の plugin path を更新してください。
+
+手元の mise `2026.7.5` には package-plugin 用の bootstrap CLI がまだありません。
+その版で `mise bootstrap` を実行した場合は、`bootstrap` task が互換 fallback として
+`mise run aur` を自動実行します。
 
 ## Legacy repository
 

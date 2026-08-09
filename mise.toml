@@ -6,7 +6,7 @@ experimental = true
 npm.package_manager = "aube"
 dotfiles.root = "~/mise-config/dotfiles"
 dotfiles.default_mode = "symlink"
-system_packages.managers = ["pacman"]
+system_packages.managers = ["pacman", "paru"]
 
 [tools]
 biome = "latest"
@@ -25,6 +25,12 @@ opencode = "latest"
 "github:trkbt10/indexion" = "latest"
 "github:k1LoW/mo" = "latest"
 "github:ogulcancelik/herdr" = "latest"
+
+# Package plugins are installed before their package entries are applied. This
+# local source keeps the plugin in this repository; publish it later and
+# replace the absolute path when the repository gets a remote origin.
+[bootstrap.plugins]
+paru = "/home/hmjn/mise-config/plugins/paru"
 
 # Host packages are intentionally declared separately from [tools].
 [bootstrap.packages]
@@ -87,6 +93,13 @@ opencode = "latest"
 "pacman:ttf-font-awesome" = "latest"
 "pacman:paru" = "latest"
 "pacman:umu-launcher" = "latest"
+"paru:google-chrome" = "latest"
+"paru:vivaldi" = "latest"
+"paru:wezterm-git" = "latest"
+"paru:swaylock-effects-git" = "latest"
+"paru:antigravity" = "latest"
+"paru:ttf-moralerspace" = "latest"
+"paru:mcfly" = "latest"
 
 # Repositories needed by the shell configuration. They are ignored by Git and
 # cloned by `mise bootstrap` before dotfiles are applied.
@@ -138,15 +151,19 @@ restart_sec = "5s"
 "~/.local/bin/zzz-run" = {}
 
 [tasks.setup]
-description = "Apply pacman packages, dotfiles, user services, and AUR packages"
+description = "Apply pacman packages, paru packages, dotfiles, and user services"
 run = "mise bootstrap --yes"
 
 [tasks.bootstrap]
-description = "Install AUR packages after the declarative bootstrap phases"
-run = "mise run aur"
+description = "Fallback AUR install for mise versions without package plugins"
+run = """
+if ! mise bootstrap plugins --help >/dev/null 2>&1; then
+  mise run aur
+fi
+"""
 
 [tasks.aur]
-description = "Install packages unavailable from the pacman repositories"
+description = "Compatibility fallback for mise versions without package plugins"
 run = """
 set -e
 if ! command -v paru >/dev/null 2>&1; then
