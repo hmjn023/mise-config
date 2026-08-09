@@ -116,6 +116,7 @@ restart_sec = "5s"
 "~/.gitconfig" = {}
 "~/.ssh/config" = {}
 "~/.config/mise/config.toml" = { source = "~/mise-config/mise.toml", mode = "symlink" }
+"~/.config/mise/mise.toml" = {}
 "~/.config/nvim" = {}
 "~/.config/ranger" = {}
 "~/.config/wezterm/wezterm.lua" = {}
