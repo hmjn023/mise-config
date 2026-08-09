@@ -1,0 +1,6 @@
+# mise-managed checkouts; bootstrap.repos recreates these on a new machine.
+/vendor/
+
+# Local per-host overrides and secrets.
+mise.local.toml
+*.local.toml

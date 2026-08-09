@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${1:-}" == run ]]; then
+  shift
+fi
+
+export WINEPREFIX="${WINEPREFIX:-$HOME/.local/share/zzz-proton}"
+export STEAM_COMPAT_DATA_PATH="$WINEPREFIX"
+export STEAM_COMPAT_CLIENT_INSTALL_PATH="${STEAM_COMPAT_CLIENT_INSTALL_PATH:-$HOME/.steam/steam}"
+export GAMEID="umu-zzz"
+
+export SDL_JOYSTICK_HIDAPI=1
+export SDL_GAMECONTROLLER_USE_BUTTON_LABELS=1
+export SDL_JOYSTICK_DRIVER=evdev
+export SDL_VIDEODRIVER=x11
+
+mkdir -p "$WINEPREFIX"
+
+if command -v umu-run >/dev/null 2>&1; then
+  for candidate in \
+    "$HOME/.local/share/Steam/compatibilitytools.d/proton-cachyos-slr" \
+    "$HOME/.steam/root/compatibilitytools.d/proton-cachyos-slr" \
+    "/usr/share/steam/compatibilitytools.d/proton-cachyos-slr" \
+    "/usr/share/steam/compatibilitytools.d/proton-cachyos"
+  do
+    if [[ -d "$candidate" ]]; then
+      export PROTONPATH="$candidate"
+      echo "Using Proton via umu-run: $PROTONPATH"
+      exec umu-run "$@"
+    fi
+  done
+fi
+
+PROTON_BIN="$(command -v proton || command -v proton-cachyos-bin || true)"
+if [[ -z "$PROTON_BIN" ]]; then
+  echo "Error: No usable Proton runtime found." >&2
+  echo "Install umu-launcher and a CachyOS Proton compatibility tool." >&2
+  exit 1
+fi
+
+echo "Using Proton: $PROTON_BIN"
+exec "$PROTON_BIN" run "$@"
