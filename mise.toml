@@ -120,7 +120,8 @@ restart_sec = "5s"
 "~/.config/nvim" = {}
 "~/.config/ranger" = {}
 "~/.config/wezterm/wezterm.lua" = {}
-"~/.config/hypr/hyprland.conf" = {}
+"~/.config/hypr/hyprland.lua" = {}
+"~/.config/hypr/config" = { source = "~/mise-config/dotfiles/.config/hypr/config", mode = "symlink-each" }
 "~/.config/hypr/hyprpaper.conf" = {}
 "~/.config/waybar/config.jsonc" = {}
 "~/.config/waybar/style.css" = {}

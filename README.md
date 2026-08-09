@@ -27,11 +27,21 @@ mise bootstrap linux systemd-units apply --yes
 mise run aur
 ```
 
+## Hyprland
+
+Hyprland 0.55+ uses native Lua configuration. The entrypoint is
+`dotfiles/.config/hypr/hyprland.lua`; the monitor, options, autostart, and
+keybindings are split into `config/*.lua` modules with `require()`.
+
 ## Host differences
 
-Hyprland の monitor 設定は汎用の `monitor=,highres,auto,1` にしています。
+Hyprland の monitor 設定は汎用の `output="", mode="highres"` にしています。
 Dell の固定 monitor 配置や ThinkPad 固有の設定が必要になった場合は、
-`dotfiles/.config/hypr/hyprland.conf` をホストごとに調整します。
+`dotfiles/.config/hypr/config/monitors.lua` をホストごとに調整します。
+
+旧 `~/.config/hypr/hyprland.conf` は mise の管理対象から外しています。
+Lua 設定で正常に起動できることを確認してから、残っている Nix 管理の symlink を
+手動で片付けてください。
 
 ## AUR
 
