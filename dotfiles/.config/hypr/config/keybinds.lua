@@ -21,9 +21,9 @@ command(shift_mod .. " + W", "$HOME/side.sh")
 
 -- System
 bind(shift_mod .. " + Q", hl.dsp.window.close())
-command(shift_mod .. " + E", "hyprctl dispatch exit")
+command(shift_mod .. " + E", "hyprshutdown")
 bind(shift_mod .. " + Space", hl.dsp.window.float({ action = "toggle" }))
-command(main_mod .. " + F", "hyprctl dispatch fullscreen")
+bind(main_mod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
 command(shift_mod .. " + L", 'swaylock -f --font "Noto Sans Mono CJK JP" -C "$HOME/.config/swaylock/config"')
 command(shift_mod .. " + N", "swaync-client -t -sw")
 command(shift_mod .. " + R", "hyprctl reload")
@@ -36,7 +36,7 @@ command(main_mod .. " + O", 'grim -g "$(slurp)" - | tesseract -l eng stdin stdou
 command(shift_mod .. " + O", 'grim -g "$(slurp)" - | tesseract -l jpn+eng stdin stdout | sed "s/ //g" | wl-copy')
 
 -- Audio and brightness
-local media_options = { locked = true, repeating = true }
+local media_options = { locked = true }
 command("XF86AudioRaiseVolume", "swayosd-client --output-volume raise", media_options)
 command("XF86AudioLowerVolume", "swayosd-client --output-volume lower", media_options)
 command("XF86AudioMute", "swayosd-client --output-volume mute-toggle", media_options)

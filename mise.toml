@@ -1,198 +1,47 @@
-# Standalone Arch Linux / CachyOS user-environment bootstrap.
-
 [settings]
-all_compile = false
 experimental = true
 npm.package_manager = "aube"
 dotfiles.root = "~/mise-config/dotfiles"
 dotfiles.default_mode = "symlink"
-system_packages.managers = ["pacman", "paru"]
+system_packages.managers = ["pacman"]
 
 [tools]
-biome = "latest"
+"aqua:jdx/mise" = "latest"
+usage = "latest"
 node = "latest"
 uv = "latest"
 aube = "latest"
 bun = "latest"
-"aws-cli" = "latest"
-terraform = "latest"
+biome = "latest"
 claude = "latest"
-"npm:@openai/codex" = "latest"
-opencode = "latest"
+terraform = "latest"
+aws-cli = "latest"
 "npm:@playwright/cli" = "latest"
 "npm:ctx7" = "latest"
+"npm:@openai/codex" = "latest"
 "github:rtk-ai/rtk" = "latest"
 "github:trkbt10/indexion" = "latest"
 "github:k1LoW/mo" = "latest"
 "github:ogulcancelik/herdr" = "latest"
 
-# Package plugins are installed before their package entries are applied. This
-# local source keeps the plugin in this repository; publish it later and
-# replace the absolute path when the repository gets a remote origin.
-[bootstrap.plugins]
-paru = "/home/hmjn/mise-config/plugins/paru"
-
-# Host packages are intentionally declared separately from [tools].
-[bootstrap.packages]
-"pacman:base-devel" = "latest"
-"pacman:git" = "latest"
-"pacman:github-cli" = "latest"
-"pacman:neovim" = "latest"
-"pacman:tmux" = "latest"
-"pacman:ranger" = "latest"
-"pacman:fastfetch" = "latest"
-"pacman:btop" = "latest"
-"pacman:eza" = "latest"
-"pacman:lsd" = "latest"
-"pacman:fzf" = "latest"
-"pacman:jq" = "latest"
-"pacman:ripgrep" = "latest"
-"pacman:fd" = "latest"
-"pacman:bat" = "latest"
-"pacman:kakasi" = "latest"
-"pacman:wl-clipboard" = "latest"
-"pacman:libnotify" = "latest"
-"pacman:grim" = "latest"
-"pacman:slurp" = "latest"
-"pacman:playerctl" = "latest"
-"pacman:tesseract" = "latest"
-"pacman:tesseract-data-jpn" = "latest"
-"pacman:hyprland" = "latest"
-"pacman:hyprpaper" = "latest"
-"pacman:kitty" = "latest"
-"pacman:pavucontrol" = "latest"
-"pacman:waybar" = "latest"
-"pacman:dolphin" = "latest"
-"pacman:vlc" = "latest"
-"pacman:jdk-openjdk" = "latest"
-"pacman:discord" = "latest"
-"pacman:vesktop" = "latest"
-"pacman:localsend" = "latest"
-"pacman:prismlauncher" = "latest"
-"pacman:code" = "latest"
-"pacman:zsh" = "latest"
-"pacman:zsh-autosuggestions" = "latest"
-"pacman:zsh-syntax-highlighting" = "latest"
-"pacman:starship" = "latest"
-"pacman:zoxide" = "latest"
-"pacman:mako" = "latest"
-"pacman:fcitx5" = "latest"
-"pacman:fcitx5-gtk" = "latest"
-"pacman:fcitx5-qt" = "latest"
-"pacman:fcitx5-mozc" = "latest"
-"pacman:swayosd" = "latest"
-"pacman:swaync" = "latest"
-"pacman:wofi" = "latest"
-"pacman:xdg-desktop-portal" = "latest"
-"pacman:xdg-desktop-portal-hyprland" = "latest"
-"pacman:xdg-desktop-portal-gtk" = "latest"
-"pacman:dconf" = "latest"
-"pacman:fontconfig" = "latest"
-"pacman:noto-fonts-cjk" = "latest"
-"pacman:noto-fonts-emoji" = "latest"
-"pacman:ttf-font-awesome" = "latest"
-"pacman:paru" = "latest"
-"pacman:umu-launcher" = "latest"
-"paru:google-chrome" = "latest"
-"paru:vivaldi" = "latest"
-"paru:wezterm-git" = "latest"
-"paru:swaylock-effects-git" = "latest"
-"paru:antigravity" = "latest"
-"paru:ttf-moralerspace" = "latest"
-"paru:mcfly" = "latest"
-
-# Repositories needed by the shell configuration. They are ignored by Git and
-# cloned by `mise bootstrap` before dotfiles are applied.
-[bootstrap.repos]
-"~/mise-config/vendor/zsh-romaji-complete" = { url = "https://github.com/aoyama-val/zsh-romaji-complete.git", ref = "main" }
-"~/mise-config/vendor/ni.zsh" = { url = "https://github.com/azu/ni.zsh.git", ref = "main" }
-
-[bootstrap.user]
-login_shell = "/bin/zsh"
-
-# These replace the Home Manager user services. The actual binaries come from
-# pacman; mise only owns the user-unit definition and lifecycle.
-[bootstrap.linux.systemd.units.hyprpaper]
-description = "Hyprpaper wallpaper daemon"
-exec_start = "/usr/bin/hyprpaper"
-restart = "on-failure"
-restart_sec = "5s"
-
-[bootstrap.linux.systemd.units.swayosd]
-description = "SwayOSD daemon"
-exec_start = "/usr/bin/swayosd-server"
-restart = "on-failure"
-restart_sec = "5s"
 
 [dotfiles]
-"~/.zshrc" = {}
-"~/.gitconfig" = {}
-"~/.ssh/config" = {}
 "~/.config/mise/config.toml" = { source = "~/mise-config/mise.toml", mode = "symlink" }
-"~/.config/mise/mise.toml" = {}
+"~/.config/mise/config.personal.toml" = { source = "~/mise-config/mise.personal.toml", mode = "symlink" }
+"~/.config/mise/config.work.toml" = { source = "~/mise-config/mise.work.toml", mode = "symlink" }
+"~/.zshrc" = {}
 "~/.config/nvim" = {}
-"~/.config/ranger" = {}
-"~/.config/wezterm/wezterm.lua" = {}
-"~/.config/hypr/hyprland.lua" = {}
-"~/.config/hypr/config" = { source = "~/mise-config/dotfiles/.config/hypr/config", mode = "symlink-each" }
-"~/.config/hypr/hyprpaper.conf" = {}
-"~/.config/waybar/config.jsonc" = {}
-"~/.config/waybar/style.css" = {}
-"~/.config/kitty/kitty.conf" = {}
-"~/.config/swaylock/config" = {}
 "~/.config/tmux/tmux.conf" = {}
-"~/.config/gtk-3.0/settings.ini" = {}
-"~/.config/gtk-4.0/settings.ini" = {}
-"~/.config/fontconfig/fonts.conf" = {}
-"~/.config/chrome-flags.conf" = {}
-"~/.config/discord-flags.conf" = {}
-"~/.config/vesktop-flags.conf" = {}
-"~/.local/bin/proton-cachyos" = {}
-"~/.local/bin/zzz-run" = {}
 
 [tasks.setup]
-description = "Apply pacman packages, paru packages, dotfiles, and user services"
-run = "mise bootstrap --yes"
-
-[tasks.bootstrap]
-description = "Fallback AUR install for mise versions without package plugins"
+description = "Apply common packages, dotfiles, and user services"
 run = """
-if ! mise bootstrap plugins --help >/dev/null 2>&1; then
-  mise run aur
+set -eu
+managed_mise="${MISE_DATA_DIR:-$HOME/.local/share/mise}/installs/aqua-jdx-mise/latest/mise/bin/mise"
+if [ ! -x "$managed_mise" ]; then
+  mise install aqua:jdx/mise@latest
 fi
-"""
-
-[tasks.aur]
-description = "Compatibility fallback for mise versions without package plugins"
-run = """
-set -e
-if ! command -v paru >/dev/null 2>&1; then
-  echo "paru is required for AUR packages; install it first and rerun this task." >&2
-  exit 1
-fi
-paru -S --needed --noconfirm \
-  google-chrome \
-  vivaldi \
-  wezterm-git \
-  swaylock-effects-git \
-  antigravity \
-  ttf-moralerspace \
-  mcfly
-"""
-
-[tasks.setup-chaotic]
-description = "Enable the Chaotic-AUR repository on CachyOS/Arch"
-run = """
-set -e
-sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-sudo pacman-key --lsign-key 3056513887B78AEB
-sudo pacman -U --noconfirm \
-  'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
-  'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-if ! grep -q "\\[chaotic-aur\\]" /etc/pacman.conf; then
-  printf '\\n[chaotic-aur]\\nInclude = /etc/pacman.d/chaotic-mirrorlist\\n' | sudo tee -a /etc/pacman.conf
-fi
-sudo pacman -Sy
+exec "$managed_mise" bootstrap --yes
 """
 
 [tasks.check]

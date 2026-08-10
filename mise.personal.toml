@@ -1,0 +1,136 @@
+[settings]
+system_packages.managers = ["pacman", "paru"]
+
+[tools]
+opencode = "latest"
+
+
+[bootstrap.packages]
+# Basic system, shell, and CLI environment.
+"pacman:base-devel" = "latest"
+"pacman:git" = "latest"
+"pacman:github-cli" = "latest"
+"pacman:tmux" = "latest"
+"pacman:zsh" = "latest"
+"pacman:zsh-autosuggestions" = "latest"
+"pacman:zsh-syntax-highlighting" = "latest"
+"pacman:btop" = "latest"
+"pacman:eza" = "latest"
+"pacman:lsd" = "latest"
+"pacman:fzf" = "latest"
+"pacman:jq" = "latest"
+"pacman:ripgrep" = "latest"
+"pacman:fd" = "latest"
+"pacman:bat" = "latest"
+
+# Development environment.
+"pacman:neovim" = "latest"
+"pacman:ranger" = "latest"
+"pacman:kakasi" = "latest"
+"pacman:wl-clipboard" = "latest"
+"pacman:libnotify" = "latest"
+"pacman:grim" = "latest"
+"pacman:slurp" = "latest"
+"pacman:playerctl" = "latest"
+"pacman:tesseract" = "latest"
+"pacman:tesseract-data-jpn" = "latest"
+"pacman:hyprland" = "latest"
+"pacman:hyprpaper" = "latest"
+"pacman:hyprshutdown" = "latest"
+"pacman:kitty" = "latest"
+"pacman:waybar" = "latest"
+"pacman:pavucontrol" = "latest"
+"pacman:starship" = "latest"
+"pacman:zoxide" = "latest"
+"pacman:mako" = "latest"
+"pacman:fcitx5" = "latest"
+"pacman:fcitx5-gtk" = "latest"
+"pacman:fcitx5-qt" = "latest"
+"pacman:fcitx5-mozc" = "latest"
+"pacman:swayosd" = "latest"
+"pacman:wofi" = "latest"
+"pacman:xdg-desktop-portal" = "latest"
+"pacman:xdg-desktop-portal-hyprland" = "latest"
+"pacman:kwallet-pam" = "latest"
+"pacman:noto-fonts-cjk" = "latest"
+"pacman:noto-fonts-emoji" = "latest"
+"pacman:woff2-font-awesome" = "latest"
+
+# Desktop applications and launchers.
+"pacman:dolphin" = "latest"
+"pacman:vlc" = "latest"
+"pacman:discord" = "latest"
+"pacman:localsend" = "latest"
+"pacman:prismlauncher" = "latest"
+"pacman:paru" = "latest"
+
+# AUR applications and fonts.
+"paru:google-chrome" = "latest"
+"paru:vivaldi" = "latest"
+"paru:wezterm-git" = "latest"
+"paru:swaylock-effects-git" = "latest"
+"paru:antigravity" = "latest"
+"paru:ttf-moralerspace" = "latest"
+"paru:mcfly" = "latest"
+
+# Repositories used by the personal shell configuration.
+[bootstrap.repos]
+"~/mise-config/vendor/zsh-romaji-complete" = { url = "https://github.com/aoyama-val/zsh-romaji-complete.git", ref = "main" }
+
+[bootstrap.user]
+login_shell = "/bin/zsh"
+
+[bootstrap.hooks.pre-dotfiles]
+run = "Hyprland --verify-config --config ~/mise-config/dotfiles/.config/hypr/hyprland.lua"
+
+[dotfiles]
+"~/.gitconfig" = {}
+"~/.ssh/config" = {}
+"~/.config/ranger" = {}
+"~/.config/wezterm/wezterm.lua" = {}
+"~/.config/hypr/hyprland.lua" = { mode = "copy" }
+"~/.config/hypr/config" = { source = "~/mise-config/dotfiles/.config/hypr/config", mode = "copy" }
+"~/.config/hypr/hyprpaper.conf" = { mode = "copy" }
+"~/.config/waybar/config.jsonc" = {}
+"~/.config/waybar/style.css" = {}
+"~/.config/kitty/kitty.conf" = {}
+"~/.config/swaylock/config" = {}
+"~/.config/gtk-3.0/settings.ini" = {}
+"~/.config/gtk-4.0/settings.ini" = {}
+"~/.config/fontconfig/fonts.conf" = {}
+
+
+[tasks.setup-plugins]
+description = "Link local mise package plugins"
+run = "mise plugins link --force paru ~/mise-config/plugins/paru"
+
+[tasks.check-hyprland]
+description = "Validate Hyprland Lua config before applying it"
+run = "Hyprland --verify-config --config ~/mise-config/dotfiles/.config/hypr/hyprland.lua"
+
+[tasks.setup]
+description = "Apply personal packages and dotfiles"
+depends = ["setup-plugins", "check-hyprland"]
+run = """
+set -eu
+managed_mise="${MISE_DATA_DIR:-$HOME/.local/share/mise}/installs/aqua-jdx-mise/latest/mise/bin/mise"
+if [ ! -x "$managed_mise" ]; then
+  mise install aqua:jdx/mise@latest
+fi
+exec "$managed_mise" -E personal bootstrap --yes
+"""
+
+[tasks.setup-chaotic]
+description = "Enable the Chaotic-AUR repository on CachyOS/Arch"
+run = """
+set -e
+sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+sudo pacman-key --lsign-key 3056513887B78AEB
+sudo pacman -U --noconfirm \
+  'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
+  'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+if ! grep -q "\\[chaotic-aur\\]" /etc/pacman.conf; then
+  printf '\\n[chaotic-aur]\\nInclude = /etc/pacman.d/chaotic-mirrorlist\\n' | sudo tee -a /etc/pacman.conf
+fi
+sudo pacman -Sy
+"""

@@ -1,6 +1,0 @@
-# Legacy-compatible global tool configuration.
-# Keep this file separate from config.toml so old mise lookup paths continue
-# to work without leaving a Home Manager/Nix-owned file behind.
-
-[tools]
-usage = "latest"

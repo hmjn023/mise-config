@@ -3,7 +3,7 @@
 export WEZTERM_SHELL_SKIP_ALL=1
 export GOPATH="$HOME/go"
 export ANDROID_HOME="$HOME/Android/Sdk"
-export NDK_HOME="$HOME/Android/Sdk/ndk/26.3.11579264"
+export NDK_HOME="$HOME/Android/Sdk/ndk/27.3.13750724"
 export CARGO_HOME="$HOME/.cargo"
 export NODEJS_CHECK_BINARY=0
 export npm_config_prefix="$HOME/.npm-global"
@@ -25,6 +25,12 @@ path=(
   "/var/lib/snapd/snap/bin"
   $path
 )
+# Prefer the mise binary managed by this config once it has been installed.
+# Before that first install, fall back to the system mise package.
+MISE_SELF_BIN="${MISE_DATA_DIR:-$HOME/.local/share/mise}/installs/aqua-jdx-mise/latest/mise/bin"
+if [[ -x "$MISE_SELF_BIN/mise" ]]; then
+  path=("$MISE_SELF_BIN" $path)
+fi
 typeset -U path PATH
 
 HISTSIZE=100000
