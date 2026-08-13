@@ -8,6 +8,32 @@ vim.keymap.set("n", "<Leader>fg", "<cmd>Telescope live_grep<CR>", opts)
 vim.keymap.set("n", "<Leader>fb", "<cmd>Telescope buffers<CR>", opts)
 vim.keymap.set("n", "<Leader>fh", "<cmd>Telescope help_tags<CR>", opts)
 
+-- LSP navigation aliases under the leader key.
+-- Keep the conventional bare gd/gr/gi mappings as well; these aliases make
+-- the same actions discoverable from the leader popup.
+local lsp_leader_opts = { noremap = true, silent = true }
+vim.keymap.set("n", "<Leader>gD", vim.lsp.buf.declaration, vim.tbl_extend("force", lsp_leader_opts, {
+	desc = "LSP: declaration",
+}))
+vim.keymap.set("n", "<Leader>gd", vim.lsp.buf.definition, vim.tbl_extend("force", lsp_leader_opts, {
+	desc = "LSP: definition",
+}))
+vim.keymap.set("n", "<Leader>gr", vim.lsp.buf.references, vim.tbl_extend("force", lsp_leader_opts, {
+	desc = "LSP: references",
+}))
+vim.keymap.set("n", "<Leader>gO", vim.lsp.buf.document_symbol, vim.tbl_extend("force", lsp_leader_opts, {
+	desc = "LSP: document symbols",
+}))
+vim.keymap.set("n", "<Leader>D", vim.lsp.buf.type_definition, vim.tbl_extend("force", lsp_leader_opts, {
+	desc = "LSP: type definition",
+}))
+vim.keymap.set("n", "<Leader>rn", vim.lsp.buf.rename, vim.tbl_extend("force", lsp_leader_opts, {
+	desc = "LSP: rename symbol",
+}))
+vim.keymap.set("n", "<Leader>ca", vim.lsp.buf.code_action, vim.tbl_extend("force", lsp_leader_opts, {
+	desc = "LSP: code action",
+}))
+
 -- Buffer navigation
 vim.keymap.set("n", "<C-l>", "<cmd>bnext<CR>", opts)
 vim.keymap.set("n", "<C-h>", "<cmd>bprev<CR>", opts)
@@ -30,10 +56,10 @@ end, opts)
 
 -- LSP keymaps (these will be set up in lsp.lua)
 -- Global diagnostic mappings
-vim.keymap.set("n", "<space>e", vim.diagnostic.open_float, opts)
+vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist, opts)
+vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
 
 -- Git navigation (gitsigns.nvim will override these with proper hunk navigation)
 vim.keymap.set("n", "]c", function()

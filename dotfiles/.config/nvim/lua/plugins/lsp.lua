@@ -3,7 +3,6 @@ return {
 	"neovim/nvim-lspconfig",
 	dependencies = {
 		"williamboman/mason.nvim",
-		"williamboman/mason-lspconfig.nvim",
 		"hrsh7th/nvim-cmp",
 		"hrsh7th/cmp-nvim-lsp",
 	},
@@ -22,25 +21,63 @@ return {
 
 				local bufopts = { noremap = true, silent = true, buffer = bufnr }
 
-				-- LSP navigation
-				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, bufopts)
-				vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
-				vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
-				vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
-				vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, bufopts)
+				-- LSP navigation and symbol operations
+				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: declaration",
+				}))
+				vim.keymap.set("n", "gd", vim.lsp.buf.definition, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: definition",
+				}))
+				-- Python LSP servers commonly do not implement
+				-- textDocument/implementation. Only expose this mapping when the
+				-- attached server actually supports it, avoiding a misleading warning.
+				if client and client:supports_method("textDocument/implementation") then
+					vim.keymap.set("n", "gi", vim.lsp.buf.implementation, vim.tbl_extend("force", bufopts, {
+						desc = "LSP: implementation",
+					}))
+					vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation, vim.tbl_extend("force", bufopts, {
+						desc = "LSP: implementation",
+					}))
+				end
+				vim.keymap.set("n", "gr", vim.lsp.buf.references, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: references",
+				}))
+				vim.keymap.set("n", "gO", vim.lsp.buf.document_symbol, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: document symbols",
+				}))
+				vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: hover",
+				}))
+				vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: signature help",
+				}))
+				vim.keymap.set("n", "<leader>ws", vim.lsp.buf.workspace_symbol, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: workspace symbols",
+				}))
 
 				-- Workspace management
-				vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, bufopts)
-				vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, bufopts)
-				vim.keymap.set("n", "<space>wl", function()
+				vim.keymap.set("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: add workspace folder",
+				}))
+				vim.keymap.set("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: remove workspace folder",
+				}))
+				vim.keymap.set("n", "<leader>wl", function()
 					print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-				end, bufopts)
+				end, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: list workspace folders",
+				}))
 
 				-- Code actions and navigation
-				vim.keymap.set("n", "<space>D", vim.lsp.buf.type_definition, bufopts)
-				vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, bufopts)
-				vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, bufopts)
-				vim.keymap.set("n", "gr", vim.lsp.buf.references, bufopts)
+				vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: type definition",
+				}))
+				vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: rename symbol",
+				}))
+				vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, vim.tbl_extend("force", bufopts, {
+					desc = "LSP: code action",
+				}))
 
 				-- Document highlight
 				if client and client.server_capabilities.documentHighlightProvider then
@@ -111,12 +148,16 @@ return {
 
 		-- Helper function to find root directory
 		local function find_root(patterns)
-			return function(fname)
-				return vim.fs.root(fname, patterns)
+			return function(bufnr, on_dir)
+				local root = vim.fs.root(bufnr, patterns)
+				if root then
+					on_dir(root)
+				end
 			end
 		end
 
-		-- LSP server configurations using vim.lsp.config API (Neovim 0.11+)
+		-- LSP server configurations using vim.lsp.config API (Neovim 0.11+).
+		-- mason-lspconfig installs and enables only the servers managed by Mason.
 		vim.lsp.config.ruff = {
 			cmd = { "ruff", "server" },
 			filetypes = { "python" },
@@ -128,6 +169,13 @@ return {
 				lint = { enable = true, select = { "ALL" } },
 				format = { enable = true },
 			},
+		}
+
+		vim.lsp.config.pyright = {
+			cmd = { "pyright-langserver", "--stdio" },
+			filetypes = { "python" },
+			root_dir = find_root({ "pyproject.toml", "setup.py", "requirements.txt", ".git" }),
+			capabilities = capabilities,
 		}
 
 		vim.lsp.config.gopls = {
@@ -176,6 +224,13 @@ return {
 			cmd = { "biome", "lsp-proxy" },
 			filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "json", "jsonc", "html", "css", "vue" },
 			root_dir = find_root({ "biome.json", "biome.jsonc", ".git" }),
+			capabilities = capabilities,
+		}
+
+		vim.lsp.config.ts_ls = {
+			cmd = { "typescript-language-server", "--stdio" },
+			filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+			root_dir = find_root({ "package.json", "tsconfig.json", "jsconfig.json", ".git" }),
 			capabilities = capabilities,
 		}
 
@@ -251,16 +306,6 @@ return {
 			root_dir = find_root({ ".terraform", ".git" }),
 			capabilities = capabilities,
 		}
-
-		local servers = {
-			"ruff", "gopls", "clangd", "kotlin_language_server",
-			"ltex", "taplo", "zk", "biome", "cssls", "tailwindcss",
-			"texlab", "jdtls", "rust_analyzer", "html", "lua_ls",
-			"terraformls",
-		}
-		for _, server_name in ipairs(servers) do
-			vim.lsp.enable(server_name)
-		end
 
 		vim.filetype.add({
 			extension = {
