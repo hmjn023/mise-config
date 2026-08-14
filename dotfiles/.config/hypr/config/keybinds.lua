@@ -40,7 +40,9 @@ local media_options = { locked = true }
 command("XF86AudioRaiseVolume", "swayosd-client --output-volume raise", media_options)
 command("XF86AudioLowerVolume", "swayosd-client --output-volume lower", media_options)
 command("XF86AudioMute", "swayosd-client --output-volume mute-toggle", media_options)
-command("XF86AudioMicMute", "swayosd-client --input-volume mute-toggle", media_options)
+-- Fn4 / microphone mute: toggle the default PipeWire capture source directly.
+-- This keeps the hotkey independent from swayosd's input-volume support.
+command("XF86AudioMicMute", "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle", media_options)
 command("XF86MonBrightnessUp", "swayosd-client --brightness raise", media_options)
 command("XF86MonBrightnessDown", "swayosd-client --brightness lower", media_options)
 

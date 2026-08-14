@@ -1,4 +1,4 @@
-# User shell configuration migrated from Home Manager.
+# User shell configuration managed by mise.
 
 export WEZTERM_SHELL_SKIP_ALL=1
 export GOPATH="$HOME/go"
@@ -51,8 +51,7 @@ if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"
 fi
 
-# Keep the two plugins used by the old Home Manager module, but fetch them as
-# ordinary bootstrap repositories instead of putting them in the Nix store.
+# Keep the two shell plugins as ordinary bootstrap repositories.
 ZSH_ROMAJI_DIR="$HOME/mise-config/vendor/zsh-romaji-complete"
 NI_ZSH_FILE="$HOME/mise-config/vendor/ni.zsh/ni.zsh"
 if [[ -d "$ZSH_ROMAJI_DIR" ]]; then

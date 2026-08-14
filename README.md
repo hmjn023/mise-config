@@ -35,7 +35,7 @@ mise -E work run setup
 環境ファイルは `mise.<env>.toml` として共通設定に追加・上書きされます。
 
 ```sh
-mise -E personal run setup-plugins
+mise -E personal bootstrap plugins apply --yes
 mise -E personal bootstrap packages apply --manager pacman --yes
 mise -E personal bootstrap packages apply --manager paru --yes
 mise -E personal bootstrap repos apply --yes
@@ -61,7 +61,7 @@ Dell の固定 monitor 配置や ThinkPad 固有の設定が必要になった�
 Hyprland の終了は `hyprshutdown` を使い、Wayland client を先に正常終了させます。
 
 旧 `~/.config/hypr/hyprland.conf` は mise の管理対象から外しています。
-Lua 設定で正常に起動できることを確認してから、残っている Nix 管理の symlink を
+Lua 設定で正常に起動できることを確認してから、残っている旧 symlink を
 手動で片付けてください。
 
 ## AUR
@@ -79,7 +79,7 @@ plugin は `paru -Q` で状態を確認し、`paru -S --needed --noconfirm` で
 宣言されたパッケージだけを処理します。mise の package-plugin API v1 では
 uninstall/prune は未対応なので、削除は `paru -Rns` を手動で実行してください。
 
-ローカル plugin は `setup-plugins` task が `mise plugins link` で登録します。
+ローカル plugin は `[bootstrap.plugins]` で宣言的に登録します。
 
 Hyprland の設定は live symlink ではなく copy mode で管理します。personal profile の
 dotfile 適用前には `Hyprland --verify-config` を実行し、構文エラーがあれば適用を中止します。

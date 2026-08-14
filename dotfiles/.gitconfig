@@ -1,5 +1,8 @@
 [credential]
     helper = !gh auth git-credential
+[user]
+    name = hmjn
+    email = hmjn023@gmail.com
 [core]
     pager = delta
 [delta]

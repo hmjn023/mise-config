@@ -29,9 +29,16 @@ aws-cli = "latest"
 "~/.config/mise/config.toml" = { source = "~/mise-config/mise.toml", mode = "symlink" }
 "~/.config/mise/config.personal.toml" = { source = "~/mise-config/mise.personal.toml", mode = "symlink" }
 "~/.config/mise/config.work.toml" = { source = "~/mise-config/mise.work.toml", mode = "symlink" }
+"~/.zprofile" = {}
+"~/.zshenv" = {}
 "~/.zshrc" = {}
+"~/.config/chrome-flags.conf" = {}
+"~/.config/discord-flags.conf" = {}
+"~/.config/vesktop-flags.conf" = {}
 "~/.config/nvim" = {}
 "~/.config/tmux/tmux.conf" = {}
+"~/.local/bin/proton-cachyos" = {}
+"~/.local/bin/zzz-run" = {}
 
 [tasks.setup]
 description = "Apply common packages, dotfiles, and user services"

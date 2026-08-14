@@ -4,13 +4,18 @@ system_packages.managers = ["pacman", "paru"]
 [tools]
 opencode = "latest"
 
+[bootstrap.plugins]
+paru = "/home/hmjn/mise-config/plugins/paru"
 
 [bootstrap.packages]
 # Basic system, shell, and CLI environment.
 "pacman:base-devel" = "latest"
 "pacman:git" = "latest"
 "pacman:github-cli" = "latest"
+"pacman:git-delta" = "latest"
 "pacman:tmux" = "latest"
+"pacman:man-db" = "latest"
+"pacman:man-pages" = "latest"
 "pacman:zsh" = "latest"
 "pacman:zsh-autosuggestions" = "latest"
 "pacman:zsh-syntax-highlighting" = "latest"
@@ -22,6 +27,8 @@ opencode = "latest"
 "pacman:ripgrep" = "latest"
 "pacman:fd" = "latest"
 "pacman:bat" = "latest"
+"pacman:fastfetch" = "latest"
+"pacman:code" = "latest"
 
 # Development environment.
 "pacman:neovim" = "latest"
@@ -37,6 +44,7 @@ opencode = "latest"
 "pacman:hyprland" = "latest"
 "pacman:hyprpaper" = "latest"
 "pacman:hyprshutdown" = "latest"
+"pacman:jdk-openjdk" = "latest"
 "pacman:kitty" = "latest"
 "pacman:waybar" = "latest"
 "pacman:pavucontrol" = "latest"
@@ -46,7 +54,7 @@ opencode = "latest"
 "pacman:fcitx5" = "latest"
 "pacman:fcitx5-gtk" = "latest"
 "pacman:fcitx5-qt" = "latest"
-"pacman:fcitx5-mozc" = "latest"
+"pacman:fcitx5-mozc-ut" = "latest"
 "pacman:swayosd" = "latest"
 "pacman:wofi" = "latest"
 "pacman:xdg-desktop-portal" = "latest"
@@ -54,6 +62,7 @@ opencode = "latest"
 "pacman:kwallet-pam" = "latest"
 "pacman:noto-fonts-cjk" = "latest"
 "pacman:noto-fonts-emoji" = "latest"
+"pacman:ttf-jetbrains-mono-nerd" = "latest"
 "pacman:woff2-font-awesome" = "latest"
 
 # Desktop applications and launchers.
@@ -66,6 +75,7 @@ opencode = "latest"
 
 # AUR applications and fonts.
 "paru:google-chrome" = "latest"
+"paru:vesktop" = "latest"
 "paru:vivaldi" = "latest"
 "paru:wezterm-git" = "latest"
 "paru:swaylock-effects-git" = "latest"
@@ -76,6 +86,7 @@ opencode = "latest"
 # Repositories used by the personal shell configuration.
 [bootstrap.repos]
 "~/mise-config/vendor/zsh-romaji-complete" = { url = "https://github.com/aoyama-val/zsh-romaji-complete.git", ref = "main" }
+"~/mise-config/vendor/ni.zsh" = { url = "https://github.com/azu/ni.zsh.git", ref = "main" }
 
 [bootstrap.user]
 login_shell = "/bin/zsh"
@@ -100,17 +111,13 @@ run = "Hyprland --verify-config --config ~/mise-config/dotfiles/.config/hypr/hyp
 "~/.config/fontconfig/fonts.conf" = {}
 
 
-[tasks.setup-plugins]
-description = "Link local mise package plugins"
-run = "mise plugins link --force paru ~/mise-config/plugins/paru"
-
 [tasks.check-hyprland]
 description = "Validate Hyprland Lua config before applying it"
 run = "Hyprland --verify-config --config ~/mise-config/dotfiles/.config/hypr/hyprland.lua"
 
 [tasks.setup]
 description = "Apply personal packages and dotfiles"
-depends = ["setup-plugins", "check-hyprland"]
+depends = ["check-hyprland"]
 run = """
 set -eu
 managed_mise="${MISE_DATA_DIR:-$HOME/.local/share/mise}/installs/aqua-jdx-mise/latest/mise/bin/mise"

@@ -1,5 +1,5 @@
 # Environment variables that must be available to every zsh process.
-# Keep this file independent from Nix/Home Manager.
+# Keep this file self-contained and available to every zsh process.
 
 export WEZTERM_SHELL_SKIP_ALL=1
 export ANDROID_HOME="$HOME/Android/Sdk"
@@ -13,4 +13,3 @@ export VISUAL="nvim"
 export GOPATH="$HOME/go"
 export VCPKG_ROOT="/opt/vcpkg"
 export VCPKG_DOWNLOADS="/var/cache/vcpkg"
-
